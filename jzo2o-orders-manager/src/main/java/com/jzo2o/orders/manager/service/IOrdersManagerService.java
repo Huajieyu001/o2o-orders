@@ -62,4 +62,9 @@ public interface IOrdersManagerService extends IService<Orders> {
      */
     void evaluationOrder(Long ordersId);
 
+    void cancelByNoPay(OrderCancelDTO orderCancelDTO);
+
+    void cancel(OrderCancelDTO orderCancelDTO);
+
+    void cancelByDispatching(OrderCancelDTO orderCancelDTO);
 }
