@@ -34,6 +34,8 @@ public class ConsumerOrdersController {
     @Resource
     private IOrdersManagerService ordersManagerService;
 
+    @Resource
+    private IOrdersCreateService ordersCreateService;
 
     @GetMapping("/{id}")
     @ApiOperation("根据订单id查询")
@@ -53,4 +55,52 @@ public class ConsumerOrdersController {
                                                      @RequestParam(value = "sortBy", required = false) Long sortBy) {
         return ordersManagerService.consumerQueryList(UserContext.currentUserId(), ordersStatus, sortBy);
     }
+
+    @ApiOperation("下单接口")
+    @PostMapping("/place")
+    public PlaceOrderResDTO place(@RequestBody PlaceOrderReqDTO placeOrderReqDTO) {
+        return ordersCreateService.placeOrder(placeOrderReqDTO);
+    }
+
+    @PutMapping("/pay/{id}")
+    @ApiOperation("订单支付")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "订单id", required = true, dataTypeClass = Long.class)
+    })
+    public OrdersPayResDTO pay(@PathVariable("id") Long id, @RequestBody OrdersPayReqDTO ordersPayReqDTO) {
+        return ordersCreateService.pay(id, ordersPayReqDTO);
+    }
+
+    @GetMapping("/pay/{id}/result")
+    @ApiOperation("查询订单支付结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "订单id", required = true, dataTypeClass = Long.class)
+    })
+    public OrdersPayResDTO payResult(@PathVariable("id") Long id) {
+        return ordersCreateService.getPayResultFromTradServer(id);
+    }
+
+    @PutMapping("/cancel")
+    @ApiOperation("取消订单")
+    public void cancel(@RequestBody OrderCancelReqDTO orderCancelReqDTO) {
+        OrderCancelDTO orderCancelDTO = BeanUtil.toBean(orderCancelReqDTO, OrderCancelDTO.class);
+        CurrentUserInfo currentUser = UserContext.currentUser();
+        orderCancelDTO.setCurrentUserId(currentUser.getId());
+        orderCancelDTO.setCurrentUserName(currentUser.getName());
+        orderCancelDTO.setCurrentUserType(currentUser.getUserType());
+        ordersManagerService.cancel(orderCancelDTO);
+    }
+
+    @GetMapping("/getAvailableCoupons")
+    @ApiOperation("获取可用优惠券")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "serveId", value = "服务id", required = true, dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "purNum", value = "购买数量，默认1", required = false, dataTypeClass = Long.class)
+    })
+    public List<AvailableCouponsResDTO> getCoupons(@RequestParam(value = "serveId", required = true) Long serveId,
+                                                   @RequestParam(value = "purNum", required = false, defaultValue = "1") Integer purNum) {
+        return ordersCreateService.getAvailableCoupons(serveId, purNum);
+    }
+
+
 }

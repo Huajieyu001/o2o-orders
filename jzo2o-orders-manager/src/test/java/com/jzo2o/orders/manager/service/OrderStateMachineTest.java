@@ -23,14 +23,14 @@
 ////    @Test
 //    public void test_changeStatus() {
 //        //状态变更
-//        orderStateMachine.changeStatus("101",OrderStatusChangeEventEnumTest.PAYED_TEST);
+//        orderStateMachine.changeStatus("101", OrderStatusChangeEventEnum.PAYED_TEST);
 //    }
 //
 ////    @Test
-//    public void test_orderStatMmachine() {
+//    public void test_orderStatMachine() {
 //        //启动状态机
 //        String start = orderStateMachine.start("102");
 //        //状态变更
-//        orderStateMachine.changeStatus("102",OrderStatusChangeEventEnumTest.PAYED_TEST);
+//        orderStateMachine.changeStatus("102", OrderStatusChangeEventEnum.PAYED_TEST);
 //    }
 //}
